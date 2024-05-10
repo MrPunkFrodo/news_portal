@@ -1,0 +1,74 @@
+python manage.py shell
+
+1.Создать двух пользователей (с помощью метода User.objects.create_user('username'))
+from django.contrib.auth.models import User
+user1 = User.objects.create_user('Alexey')
+user2 = User.objects.create_user('Ivan')
+
+2. Создать два объекта модели Author, связанные с пользователями.
+author_Alexey = Author.objects.create(author = user1)
+author_Ivan = Author.objects.create(author = user2)
+
+3. Добавить 4 категории в модель Category.
+from news.models import Category
+cat_politic = Category.objects.create(category_name = "Политика")
+cat_tehnolog = Category.objects.create(category_name = "Технологии")
+cat_eco = Category.objects.create(category_name = "Экология")
+cat_shool = Category.objects.create(category_name = "Образование")
+
+4. Добавить 2 статьи и 1 новость.
+from news.models import Post
+article1 = Post.objects.create(author = author_Alexey, post_type = 'AR', post_title = 'Что грозит водоемам и могут ли бактерии стать спасительными', post_text = 'Не все озера в России и странах Центральной Азии хорошо изучены. Недостаток сведений может привести к тому, что некоторые из них повторят историю уникального водоема морского типа – Аральского моря. Его высыхание в связи с активной хозяйственной деятельностью превратилось в экологическую катастрофу. Байкал и высокогорные водоемы такая судьба не ждет из-за их особого гидрологического режима. А вот гарантии для озер, находящихся в низинах, нет. В том числе из-за антропогенного фактора. Экономическая деятельность для некоторых из них представляет угрозу: вмешательство человека в окружающую среду должно быть минимальным.
+Почему пересыхают реки и озера и что происходит с их обитателями? Как баланс солей влияет на судьбу водоемов? Можно ли искусственно разнообразить виды живых существ и выращивать в морях ценные породы рыб и моллюсков? Что произойдет с Черным морем, если реализовать идею по углублению пролива Босфор, соединяющего его со Средиземноморским регионом? Что такое "мусорные пояса" в Мировом океане? Могут ли живые организмы употреблять пластик и стать панацеей от загрязнения экосистемы планеты?')
+article2 = Post.objects.create(author = author_Alexey, post_type = 'AR', post_title = '"Самый важный совет": как поддержать ребенка перед ЕГЭ', post_text = 'До выпускных экзаменов в школах остается совсем немного времени, именно сейчас нужен правильный настрой, причем прежде всего родителям – от их поведения во многом зависит успех ребенка, считает академик РАН, доктор медицинских наук, профессор, заместитель президента Российской академии образования Геннадий Онищенко.')
+news1 = Post.objects.create(author = author_Ivan, post_type = 'NW', post_title = 'Разработано устройство для сканирования Земли из космоса', post_text = 'Инженеры НПО "Орион" разработали устройство для космического мониторинга природных ресурсов Земли, изучения ее метеорологических явлений, анализа чрезвычайных ситуаций, сообщает пресс-служба холдинга "Швабе", в состав которого входит производственное объединение.')
+
+
+5. Присвоить им категории (как минимум в одной статье/новости должно быть не меньше 2 категорий).
+Post.objects.get(id=1).category_names.add(Category.objects.get(id=5))
+Post.objects.get(id=1).category_names.add(Category.objects.get(id=6))
+Post.objects.get(id=2).category_names.add(Category.objects.get(id=7))
+Post.objects.get(id=3).category_names.add(Category.objects.get(id=8))
+
+6. Создать как минимум 4 комментария к разным объектам модели Post (в каждом объекте должен быть как минимум один комментарий).
+from news.models import Comment
+comm1 = Comment.objects.create(author=User.objects.create_user('New User'), related_post = Post.objects.get(id=1), comment_text = 'Первый комент')
+comm2 = Comment.objects.create(author=User.objects.create_user('New User2'), related_post = Post.objects.get(id=1), comment_text = 'Тут мог быть ваш коментарий')
+comm3 = Comment.objects.create(author=User.objects.create_user('New User3'), related_post = Post.objects.get(id=2), comment_text = 'Очень помогло, спс')
+comm4 = Comment.objects.create(author=User.objects.create_user('New User4'), related_post = Post.objects.get(id=3), comment_text = 'Интересно, так вот на что тратят $')
+
+
+7. Применяя функции like() и dislike() к статьям/новостям и комментариям, скорректировать рейтинги этих объектов.
+comm1 = Comment.objects.create(author=User.objects.create_user('New User'), related_post = Post.objects.get(id=1), comment_text = 'Первый комент')
+comm2 = Comment.objects.create(author=User.objects.create_user('New User2'), related_post = Post.objects.get(id=1), comment_text = 'Тут мог быть ваш коментарий')
+comm3 = Comment.objects.create(author=User.objects.create_user('New User3'), related_post = Post.objects.get(id=2), comment_text = 'Очень помогло, спс')
+comm4 = Comment.objects.create(author=User.objects.create_user('New User4'), related_post = Post.objects.get(id=3), comment_text = 'Интересно, так вот на что тратят $')
+comm1.like()
+comm2.like()
+comm3.dislike()
+post2 = Post.objects.get(id=1)
+post3 = Post.objects.get(id=2)
+post4 = Post.objects.get(id=3) 
+post2.like()
+post2.like()
+post3.dislike()
+post3.dislike()
+post4.like()
+
+
+8. Обновить рейтинги пользователей.
+author1 = Author.objects.get(id=1)
+author1.update_rating()
+author2 = Author.objects.get(id=2)
+author2.update_rating()
+
+9. Вывести username и рейтинг лучшего пользователя (применяя сортировку и возвращая поля первого объекта).
+Author.objects.all().order_by('-user_rating').values('author__username','user_rating').first()
+
+10. Вывести дату добавления, username автора, рейтинг, заголовок и превью лучшей статьи, основываясь на лайках/дислайках к этой статье.
+Post.objects.all().order_by('-post_rating').select_related('author__author').values('post_created', 'author__author__username', 'post_rating', 'post_title').first()
+
+11. Вывести все комментарии (дата, пользователь, рейтинг, текст) к этой статье.
+best_post_obj = Post.objects.all().order_by('-post_rating').values('id').first()
+id_max = best_post_obj.get('id')
+Comment.objects.filter(related_post_id=id_max).values('comment_text')

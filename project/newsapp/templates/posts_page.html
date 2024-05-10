@@ -1,0 +1,31 @@
+{% extends 'flatpages/default.html' %}
+ 
+{% block title %}
+Новости!!!
+{% endblock title %}
+ 
+
+{% block content %}
+    <h1>Новости</h1>
+    <hr>
+    {% if posts_list %}
+    <table>
+        <tr>
+            <td>Название</td>
+            <td>Дата публикации</td>
+            <td>Содержание</td>
+            <td>Категория</td>
+        </tr>
+        <tr>
+            <td>{{ posts.name_post }}</td>
+            <td>{{ posts.date_post }}</td>
+             <td>{{ posts.text_post }}</td>
+            {% for cat in posts.postCategory.all %}
+            <td>{{ cat.name_category }}</td>
+            {% endfor %}
+         </tr>
+    </table>
+    {% else %}
+        <h3>Новостей пока нет!</h3>
+    {% endif %}
+{% endblock content %}
